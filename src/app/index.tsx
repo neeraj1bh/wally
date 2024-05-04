@@ -12,7 +12,7 @@ import { theme } from "@/helpers/themes";
 const Welcome = () => {
   return (
     <View className="flex-1">
-      <StatusBar style="light" />
+      <StatusBar style="light"/>
       <Image
         source={images.mobile}
         className="absolute"

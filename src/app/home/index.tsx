@@ -2,20 +2,27 @@ import { View, Text, Pressable, ScrollView, TextInput } from "react-native";
 import React, { useRef, useState } from "react";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { theme } from "@/helpers/themes";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Categories from "@/components/Categories";
 
 const Home = () => {
-  const { top } = useSafeAreaInsets();
-  const paddingTop = Math.round(top > 0 ? top + 10 : 30);
+  //   const { top } = useSafeAreaInsets();
+  //   const paddingTop = Math.round(top > 0 ? top + 10 : 30);
   const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const handleChangeCategory = (category: string) => {
+    setActiveCategory(category);
+  };
 
   return (
-    <View className={`flex-1 gap-4 pt-[${paddingTop}px]`}>
+    // <View className={`flex gap-4 pt-[${paddingTop}]`} style={{ paddingTop }}>
+    <SafeAreaView className="flex gap-4 mt-2">
       <View className="items-center justify-between mx-6 flex-row">
         <Pressable>
           <Text
-            className={`text-5xl font-psemibold   text-black`}
+            className="text-5xl font-psemibold ml-6 text-black"
             style={{ color: theme.colors.neutral(0.9) }}
           >
             Wally
@@ -59,7 +66,13 @@ const Home = () => {
           )}
         </View>
       </ScrollView>
-    </View>
+      <View >
+        <Categories
+          activeCategory={activeCategory}
+          handleChangeCategory={handleChangeCategory}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
