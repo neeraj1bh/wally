@@ -19,13 +19,6 @@ module.exports = {
           100: "#CDCDE0",
         },
         grayBG: "#e5e5e5",
-        neutral: (opacity) => `rgba(10, 10, 10, ${opacity})`,
-      },
-      fontWeights: {
-        regular: 400,
-        medium: 500,
-        semibold: 600,
-        bold: 700,
       },
       radius: {
         xs: 10,
