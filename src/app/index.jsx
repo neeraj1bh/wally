@@ -33,12 +33,12 @@ const Welcome = () => {
         />
         <View className="flex-1 items-center justify-end gap-4 ">
           <Text
-            className={`text-7xl font-bold`}
+            className={`text-7xl font-pbold`}
             style={{ color: theme.colors.neutral(0.9) }}
           >
             Wally
           </Text>
-          <Text className="text-2xl tracking-wide mb-4 font-medium">
+          <Text className="text-2xl tracking-wide mb-4 font-pmedium">
             Every Pixel Tells a Story
           </Text>
           <View>
@@ -46,7 +46,7 @@ const Welcome = () => {
               className="mb-14 p-4 border rounded-xl px-20 "
               style={{ backgroundColor: theme.colors.neutral(0.9) }}
             >
-              <Text className="text-white text-xl font-medium tracking-wide">
+              <Text className="text-white text-xl font-pmedium tracking-wide">
                 Get Started
               </Text>
             </Pressable>
