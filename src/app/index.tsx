@@ -1,4 +1,4 @@
-import { Text, SafeAreaView, Image, View, Pressable } from "react-native";
+import { Text, Image, View, Pressable } from "react-native";
 import React from "react";
 import "../global.css";
 import { StatusBar } from "expo-status-bar";
@@ -6,7 +6,8 @@ import images from "../constants/images";
 import { heightPercentage, widthPercentage } from "../helpers/common";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { theme } from "../helpers/themes";
+import { router } from "expo-router";
+import { theme } from "@/helpers/themes";
 
 const Welcome = () => {
   return (
@@ -32,17 +33,22 @@ const Welcome = () => {
           end={{ x: 0.5, y: 0.8 }}
         />
         <View className="flex-1 items-center justify-end gap-4 ">
-          <Text
+          <Animated.Text
+            entering={FadeInDown.delay(400).springify()}
             className={`text-7xl font-pbold`}
             style={{ color: theme.colors.neutral(0.9) }}
           >
             Wally
-          </Text>
-          <Text className="text-2xl tracking-wide mb-4 font-pmedium">
+          </Animated.Text>
+          <Animated.Text
+            entering={FadeInDown.delay(500).springify()}
+            className="text-2xl tracking-wide mb-4 font-pmedium"
+          >
             Every Pixel Tells a Story
-          </Text>
-          <View>
+          </Animated.Text>
+          <Animated.View entering={FadeInDown.delay(600).springify()}>
             <Pressable
+              onPress={() => router.push("/home/")}
               className="mb-14 p-4 border rounded-xl px-20 "
               style={{ backgroundColor: theme.colors.neutral(0.9) }}
             >
@@ -50,7 +56,7 @@ const Welcome = () => {
                 Get Started
               </Text>
             </Pressable>
-          </View>
+          </Animated.View>
         </View>
       </Animated.View>
     </View>

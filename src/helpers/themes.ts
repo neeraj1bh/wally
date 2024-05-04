@@ -1,5 +1,5 @@
 export const theme = {
   colors: {
-    neutral: (opacity) => `rgba(10, 10, 10, ${opacity})`,
+    neutral: (opacity: number) => `rgba(10, 10, 10, ${opacity})`,
   },
 };
