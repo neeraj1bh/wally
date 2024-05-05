@@ -14,6 +14,8 @@ import Categories from "@/components/Categories";
 import { fetchImages } from "@/api";
 import ImageGrid from "@/components/ImageGrid";
 import { debounce } from "lodash";
+import FilterModal from "@/components/FilterModal";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 let page = 1;
 
@@ -30,6 +32,7 @@ const Home = () => {
   const searchInputRef = useRef<TextInput | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [images, setImages] = useState<any[]>([]);
+  const modalRef = useRef<BottomSheetModal>(null);
 
   const handleChangeCategory = (category: string | null) => {
     setActiveCategory(category);
@@ -84,6 +87,14 @@ const Home = () => {
     searchInputRef.current?.clear();
   };
 
+  const openFilterModal = () => {
+    modalRef.current?.present();
+  };
+
+  const closeFilterModal = () => {
+    modalRef.current?.dismiss();
+  };
+
   return (
     // <View className={`flex gap-4 pt-[${paddingTop}]`} style={{ paddingTop }}>
     <SafeAreaView className="space-y-3 mt-2 mx-4">
@@ -96,7 +107,7 @@ const Home = () => {
             Wally
           </Text>
         </Pressable>
-        <Pressable>
+        <Pressable onPress={openFilterModal}>
           <FontAwesome6
             name="bars-staggered"
             size={22}
@@ -142,6 +153,8 @@ const Home = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>{images.length > 0 && <ImageGrid images={images} />}</View>
       </ScrollView>
+
+      <FilterModal modalRef={modalRef} />
     </SafeAreaView>
   );
 };
