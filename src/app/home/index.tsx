@@ -33,6 +33,7 @@ const Home = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [images, setImages] = useState<any[]>([]);
   const modalRef = useRef<BottomSheetModal>(null);
+  const [filters, setFilters] = useState<any>(null);
 
   const handleChangeCategory = (category: string | null) => {
     setActiveCategory(category);
@@ -95,6 +96,16 @@ const Home = () => {
     modalRef.current?.dismiss();
   };
 
+  const applyFilters = (filters: any) => {
+    setFilters(filters);
+    closeFilterModal();
+  };
+
+  const resetFilters = () => {
+    setFilters(null);
+    closeFilterModal();
+  };
+
   return (
     // <View className={`flex gap-4 pt-[${paddingTop}]`} style={{ paddingTop }}>
     <SafeAreaView className="space-y-3 mt-2 mx-4">
@@ -150,11 +161,18 @@ const Home = () => {
           handleChangeCategory={handleChangeCategory}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} className="h-full">
         <View>{images.length > 0 && <ImageGrid images={images} />}</View>
       </ScrollView>
 
-      <FilterModal modalRef={modalRef} />
+      <FilterModal
+        modalRef={modalRef}
+        filters={filters}
+        setFilters={setFilters}
+        onApply={applyFilters}
+        onClose={closeFilterModal}
+        onReset={resetFilters}
+      />
     </SafeAreaView>
   );
 };
