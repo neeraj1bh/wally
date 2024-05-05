@@ -10,7 +10,7 @@ const ImageGrid = ({ images }: any) => {
     <View
       style={{
         minHeight: 10,
-        // marginBottom: 200,
+        marginBottom: 40,
       }}
     >
       <MasonryFlashList
@@ -21,7 +21,7 @@ const ImageGrid = ({ images }: any) => {
         )}
         estimatedItemSize={200}
         keyExtractor={(_, index) => index.toString()}
-        contentContainerStyle={{ paddingBottom: 180 }}
+        // contentContainerStyle={{ paddingBottom: 180 }}
       />
     </View>
   );

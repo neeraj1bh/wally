@@ -4,6 +4,7 @@ import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import Animated, {
   Extrapolation,
+  FadeInDown,
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
@@ -71,7 +72,7 @@ const FilterModal = ({
   const snapPoints = useMemo(() => ["75%"], []);
 
   return (
-    <View className="flex-1 p-6 justify-center bg-gray-400">
+    <View className="flex-1 p-6 justify-center">
       <BottomSheetModal
         ref={modalRef}
         index={0}
@@ -91,7 +92,12 @@ const FilterModal = ({
               const sectionContent = sections[sectionName];
               const sectionData = data.filters[sectionName];
               return (
-                <View key={sectionName}>
+                <Animated.View
+                  entering={FadeInDown.delay(index * 100 + 100)
+                    .springify()
+                    .damping(11)}
+                  key={sectionName}
+                >
                   <SectionView
                     title={sectionName}
                     content={sectionContent({
@@ -101,16 +107,21 @@ const FilterModal = ({
                       filterName: sectionName,
                     })}
                   />
-                </View>
+                </Animated.View>
               );
             })}
           </View>
-          <View className="flex flex-row justify-center gap-6 items-center flex-1 px-6">
+          <Animated.View
+            entering={FadeInDown.delay(500).springify().damping(11)}
+            className="flex flex-row justify-center gap-6 items-center flex-1 px-6"
+          >
             <Pressable
               className="items-center justify-center bg-gray-600 py-3 px-5 flex-1 rounded-xl "
               onPress={onReset}
             >
-              <Text className="text-white font-psemibold tracking-widest uppercase">Reset</Text>
+              <Text className="text-white font-psemibold tracking-widest uppercase">
+                Reset
+              </Text>
             </Pressable>
             <Pressable
               className="items-center justify-center bg-gray-600 py-3 px-5 flex-1 rounded-xl "
@@ -119,9 +130,11 @@ const FilterModal = ({
                 onClose();
               }}
             >
-              <Text className="text-white font-psemibold tracking-widest uppercase">Apply</Text>
+              <Text className="text-white font-psemibold tracking-widest uppercase">
+                Apply
+              </Text>
             </Pressable>
-          </View>
+          </Animated.View>
         </BottomSheetView>
       </BottomSheetModal>
     </View>

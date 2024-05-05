@@ -5,6 +5,7 @@ import {
   ScrollView,
   TextInput,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -40,7 +41,7 @@ const Home = () => {
     clearSearch();
     setImages([]);
     page = 1;
-    let params: { page: number; category?: string } = { page };
+    let params = { page, ...filters };
     if (category) {
       params = { ...params, category };
     }
@@ -71,13 +72,13 @@ const Home = () => {
       page = 1;
       setImages([]);
       setActiveCategory(null);
-      fetchPixabayImages({ page, q: text }, false);
+      fetchPixabayImages({ page, q: text, ...filters }, false);
     } else if (text === "") {
       page = 1;
       searchInputRef.current?.clear();
       setImages([]);
       setActiveCategory(null);
-      fetchPixabayImages({ page }, false);
+      fetchPixabayImages({ page, ...filters }, false);
     }
   };
 
@@ -97,12 +98,28 @@ const Home = () => {
   };
 
   const applyFilters = (filters: any) => {
+    if (filters) {
+      page = 1;
+      setImages([]);
+      let params = { page, ...filters };
+      if (activeCategory) params.category = activeCategory;
+      if (search) params.q = search;
+      fetchPixabayImages(params, false);
+    }
     setFilters(filters);
     closeFilterModal();
   };
 
   const resetFilters = () => {
-    setFilters(null);
+    if (filters) {
+      page = 1;
+      setFilters(null);
+      setImages([]);
+      let params: PixabayParams = { page };
+      if (activeCategory) params.category = activeCategory;
+      if (search) params.q = search;
+      fetchPixabayImages(params, false);
+    }
     closeFilterModal();
   };
 
@@ -161,9 +178,20 @@ const Home = () => {
           handleChangeCategory={handleChangeCategory}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} className="h-full">
-        <View>{images.length > 0 && <ImageGrid images={images} />}</View>
-      </ScrollView>
+      {images.length > 0 ? (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View>
+            <View>{images.length > 0 && <ImageGrid images={images} />}</View>
+            <View className="mb-56">
+              <ActivityIndicator size="large" />
+            </View>
+          </View>
+        </ScrollView>
+      ) : (
+        <View className="flex-1 min-h-[70vh] items-center justify-center">
+          <ActivityIndicator size="large" />
+        </View>
+      )}
 
       <FilterModal
         modalRef={modalRef}
