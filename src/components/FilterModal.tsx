@@ -116,7 +116,7 @@ const FilterModal = ({
             className="flex flex-row justify-center gap-6 items-center flex-1 px-6"
           >
             <Pressable
-              className="items-center justify-center bg-gray-600 py-3 px-5 flex-1 rounded-xl "
+              className="items-center justify-center bg-gray-600 py-3 px-5 flex-1 rounded-xl"
               onPress={onReset}
             >
               <Text className="text-white font-psemibold tracking-widest uppercase">

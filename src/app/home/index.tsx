@@ -35,6 +35,8 @@ const Home = () => {
   const [images, setImages] = useState<any[]>([]);
   const modalRef = useRef<BottomSheetModal>(null);
   const [filters, setFilters] = useState<any>(null);
+  const scrollRef = useRef<ScrollView | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChangeCategory = (category: string | null) => {
     setActiveCategory(category);
@@ -56,6 +58,7 @@ const Home = () => {
     params: PixabayParams = { page: 1 },
     append = false
   ) => {
+    setLoading(true);
     let response = await fetchImages(params);
     if (response.success && response?.data?.hits?.length > 0) {
       if (append) {
@@ -64,6 +67,7 @@ const Home = () => {
         setImages(response.data.hits);
       }
     }
+    setLoading(false);
   };
 
   const handleSearch = (text: string) => {
@@ -123,11 +127,29 @@ const Home = () => {
     closeFilterModal();
   };
 
+  const handleScroll = (event: any) => {
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const scrollOffset = event.nativeEvent.contentOffset.y;
+
+    if (layoutHeight + scrollOffset >= contentHeight) {
+      page += 1;
+      let params = { page, ...filters };
+      if (activeCategory) params.category = activeCategory;
+      if (search) params.q = search;
+      fetchPixabayImages(params, true);
+    }
+  };
+
+  const handleScrollUp = () => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  };
+
   return (
     // <View className={`flex gap-4 pt-[${paddingTop}]`} style={{ paddingTop }}>
     <SafeAreaView className="space-y-3 mt-2 mx-4">
       <View className="items-center justify-between flex-row">
-        <Pressable>
+        <Pressable onPress={handleScrollUp}>
           <Text
             className="text-5xl font-psemibold text-black"
             style={{ color: theme.colors.neutral(0.9) }}
@@ -179,12 +201,21 @@ const Home = () => {
         />
       </View>
       {images.length > 0 ? (
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          onScroll={handleScroll}
+          scrollEventThrottle={5}
+          ref={scrollRef}
+          showsVerticalScrollIndicator={false}
+        >
           <View>
-            <View>{images.length > 0 && <ImageGrid images={images} />}</View>
-            <View className="mb-56">
-              <ActivityIndicator size="large" />
+            <View className={`${!loading ? "mb-40" : ""}`}>
+              {images.length > 0 && <ImageGrid images={images} />}
             </View>
+            {loading && (
+              <View className="mb-56">
+                <ActivityIndicator size="large" />
+              </View>
+            )}
           </View>
         </ScrollView>
       ) : (
