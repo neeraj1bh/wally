@@ -6,39 +6,82 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { theme } from "@/helpers/themes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Categories from "@/components/Categories";
 import { fetchImages } from "@/api";
 import ImageGrid from "@/components/ImageGrid";
+import { debounce } from "lodash";
+
+let page = 1;
+
+interface PixabayParams {
+  page: number;
+  q?: string;
+  category?: string;
+}
 
 const Home = () => {
   //   const { top } = useSafeAreaInsets();
   //   const paddingTop = Math.round(top > 0 ? top + 10 : 30);
   const [search, setSearch] = useState("");
-  const searchInputRef = useRef(null);
+  const searchInputRef = useRef<TextInput | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [images, setImages] = useState<any[]>([]);
 
   const handleChangeCategory = (category: string | null) => {
     setActiveCategory(category);
+    clearSearch();
+    setImages([]);
+    page = 1;
+    let params: { page: number; category?: string } = { page };
+    if (category) {
+      params = { ...params, category };
+    }
+    fetchPixabayImages(params, false);
   };
 
   useEffect(() => {
     fetchPixabayImages();
   }, []);
 
-  const fetchPixabayImages = async (params = { page: 1 }, append = false) => {
+  const fetchPixabayImages = async (
+    params: PixabayParams = { page: 1 },
+    append = false
+  ) => {
     let response = await fetchImages(params);
-    if (response.success) {
+    if (response.success && response?.data?.hits?.length > 0) {
       if (append) {
         setImages([...images, ...response.data.hits]);
       } else {
         setImages(response.data.hits);
       }
     }
+  };
+
+  const handleSearch = (text: string) => {
+    setSearch(text);
+    if (text.length > 2) {
+      page = 1;
+      setImages([]);
+      setActiveCategory(null);
+      fetchPixabayImages({ page, q: text }, false);
+    } else if (text === "") {
+      page = 1;
+      searchInputRef.current?.clear();
+      setImages([]);
+      setActiveCategory(null);
+      fetchPixabayImages({ page }, false);
+    }
+  };
+
+  const searchDebounced = useCallback(debounce(handleSearch, 500), []);
+
+  const clearSearch = () => {
+    setSearch("");
+    searchInputRef.current?.clear();
   };
 
   return (
@@ -72,15 +115,14 @@ const Home = () => {
           <TextInput
             placeholder="Search for photos..."
             className="flex-1 p-2 text-xl rounded-xl"
-            value={search}
             ref={searchInputRef}
-            onChangeText={(value) => setSearch(value)}
+            onChangeText={searchDebounced}
           />
           {search && (
             <Pressable
               className="p-2 rounded-lg"
               style={{ backgroundColor: theme.colors.neutral(0.1) }}
-              onPress={() => setSearch("")}
+              onPress={() => handleSearch("")}
             >
               <Ionicons
                 name="close"

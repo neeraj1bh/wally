@@ -21,7 +21,7 @@ const ImageCard = ({ item, index, columns }: ImageCardProps) => {
 
   return (
     <Pressable
-      className={`bg-gray-500 rounded-2xl overflow-hidden mb-2 ${
+      className={`bg-gray-200 rounded-2xl overflow-hidden mb-2 ${
         !isLastInRow() ? "mr-2" : ""
       }`}
     >
