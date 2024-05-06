@@ -17,6 +17,8 @@ import { Entypo, Octicons } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as FileSystem from "expo-file-system";
 import * as FileSharing from "expo-sharing";
+import Toast from "react-native-toast-message";
+import { rest } from "lodash";
 
 const ImageScreen = () => {
   const item = useLocalSearchParams();
@@ -53,6 +55,11 @@ const ImageScreen = () => {
   const handleDownloadImage = async () => {
     setStatus("downloading");
     let uri = await downloadImage();
+    if (uri) {
+      showToast("Image downloaded successfully");
+    } else {
+      showToast("Failed to download image");
+    }
     setStatus("");
   };
 
@@ -62,12 +69,10 @@ const ImageScreen = () => {
         imageUrl as string,
         filePath
       );
-
-      Alert.prompt("Finished downloading to ", uri);
-      console.log("Finished downloading to ", uri);
       return uri;
     } catch (e: any) {
       Alert.alert("Failed to download image", e.message);
+      return null;
     }
   };
 
@@ -78,9 +83,31 @@ const ImageScreen = () => {
     setStatus("");
   };
 
+  const showToast = (message: string) => {
+    Toast.show({
+      type: "success",
+      position: "bottom",
+      text1: message,
+      visibilityTime: 2000,
+      autoHide: true,
+    });
+  };
+
+  const toastConfig = {
+    success: ({ text1, props, ...rest }: any) => (
+      <View
+        {...props}
+        className="p-4 rounded-xl justify-center items-center bg-black/40"
+      >
+        <Text className="font-psemibold text-white">{text1}</Text>
+      </View>
+    ),
+  };
+
   return (
     <BlurView
-      intensity={100}
+      intensity={30}
+      //   experimentalBlurMethod="dimezisBlurView"
       style={{
         backgroundColor: "rgba(0,0,0,0.5)",
       }}
@@ -159,6 +186,7 @@ const ImageScreen = () => {
           )}
         </Animated.View>
       </View>
+      <Toast config={toastConfig} />
     </BlurView>
   );
 };
