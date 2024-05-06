@@ -18,7 +18,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import * as FileSystem from "expo-file-system";
 import * as FileSharing from "expo-sharing";
 import Toast from "react-native-toast-message";
-import { rest } from "lodash";
+import * as MediaLibrary from "expo-media-library";
 
 const ImageScreen = () => {
   const item = useLocalSearchParams();
@@ -26,7 +26,8 @@ const ImageScreen = () => {
   const [status, setStatus] = useState("loading");
   const fileName = (item?.previewURL as string)?.split("/").pop();
   const imageUrl = uri;
-  const filePath = `${FileSystem.documentDirectory}${fileName}`;
+  const temporaryFilePath = `${FileSystem.cacheDirectory}${fileName}`;
+  const finalFilePath = `${FileSystem.documentDirectory}${fileName}`;
 
   const getSize = () => {
     if (!item || !item.imageWidth || !item.imageHeight) {
@@ -65,11 +66,19 @@ const ImageScreen = () => {
 
   const downloadImage = async () => {
     try {
-      const { uri } = await FileSystem.downloadAsync(
+      // Download the file to the temporary location
+      const { uri: temporaryUri } = await FileSystem.downloadAsync(
         imageUrl as string,
-        filePath
+        temporaryFilePath
       );
-      return uri;
+      // Move the file to the Downloads directory
+      await FileSystem.moveAsync({
+        from: temporaryUri,
+        to: finalFilePath,
+      });
+      // Save to Media Library
+      await MediaLibrary.saveToLibraryAsync(finalFilePath);
+      return finalFilePath;
     } catch (e: any) {
       Alert.alert("Failed to download image", e.message);
       return null;
@@ -79,7 +88,7 @@ const ImageScreen = () => {
   const handleShare = async () => {
     setStatus("sharing");
     let uri = await downloadImage();
-    if (uri) await FileSharing.shareAsync(filePath);
+    if (uri) await FileSharing.shareAsync(uri);
     setStatus("");
   };
 
