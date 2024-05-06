@@ -16,6 +16,7 @@ import { heightPercentage, widthPercentage } from "@/helpers/common";
 import { Entypo, Octicons } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as FileSystem from "expo-file-system";
+import * as FileSharing from "expo-sharing";
 
 const ImageScreen = () => {
   const item = useLocalSearchParams();
@@ -68,6 +69,13 @@ const ImageScreen = () => {
     } catch (e: any) {
       Alert.alert("Failed to download image", e.message);
     }
+  };
+
+  const handleShare = async () => {
+    setStatus("sharing");
+    let uri = await downloadImage();
+    if (uri) await FileSharing.shareAsync(filePath);
+    setStatus("");
   };
 
   return (
@@ -127,13 +135,28 @@ const ImageScreen = () => {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.springify().delay(200)}>
-          <Pressable
-            onPress={() => router.back()}
-            className="justify-center items-center bg-white/20 rounded-lg"
-            style={{ width: heightPercentage(6), height: heightPercentage(6) }}
-          >
-            <Entypo name="share" size={22} color="white" />
-          </Pressable>
+          {status === "sharing" ? (
+            <View
+              className="justify-center items-center bg-white/20 rounded-lg"
+              style={{
+                width: heightPercentage(6),
+                height: heightPercentage(6),
+              }}
+            >
+              <ActivityIndicator size="small" />
+            </View>
+          ) : (
+            <Pressable
+              onPress={handleShare}
+              className="justify-center items-center bg-white/20 rounded-lg"
+              style={{
+                width: heightPercentage(6),
+                height: heightPercentage(6),
+              }}
+            >
+              <Entypo name="share" size={22} color="white" />
+            </Pressable>
+          )}
         </Animated.View>
       </View>
     </BlurView>
