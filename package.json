@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "ts:check": "tsc",
-    "start:wsl": "REACT_NATIVE_PACKAGER_HOSTNAME=$(netsh.exe interface ip show address 'Wi-Fi' | grep 'IP Address' | sed -r 's/^.*IP Address:\\W*//') expo start -c"
+    "start:wsl": "REACT_NATIVE_PACKAGER_HOSTNAME=$(netsh.exe interface ip show address 'Wi-Fi' | grep 'IP Address' | sed -r 's/^.*IP Address:\\W*//') expo start"
   },
   "jest": {
     "preset": "jest-expo"
@@ -23,6 +23,7 @@
     "axios": "^1.6.8",
     "expo": "~50.0.17",
     "expo-blur": "~12.9.2",
+    "expo-file-system": "~16.0.9",
     "expo-font": "^11.10.3",
     "expo-image": "~1.10.6",
     "expo-linear-gradient": "^12.7.2",

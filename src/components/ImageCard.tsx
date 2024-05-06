@@ -2,6 +2,7 @@ import { Pressable } from "react-native";
 import React from "react";
 import { Image } from "expo-image";
 import { getImageSize } from "@/helpers/common";
+import { useRouter } from "expo-router";
 
 interface ImageCardProps {
   item: any;
@@ -10,6 +11,7 @@ interface ImageCardProps {
 }
 
 const ImageCard = ({ item, index, columns }: ImageCardProps) => {
+  const router = useRouter();
   const getImageHeight = () => {
     let { imageHeight: height, imageWidth: width } = item;
     return { height: getImageSize(height, width) };
@@ -24,6 +26,9 @@ const ImageCard = ({ item, index, columns }: ImageCardProps) => {
       className={`bg-gray-200 rounded-2xl overflow-hidden mb-2 ${
         !isLastInRow() ? "mr-2" : ""
       }`}
+      onPress={() =>
+        router.push({ pathname: "/home/image", params: { ...item } })
+      }
     >
       <Image
         source={{ uri: item.webformatURL }}
