@@ -15,6 +15,7 @@ import {
 import { useFonts } from "expo-font";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { NativeWindStyleSheet } from "nativewind";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -78,3 +79,7 @@ const Layout = () => {
 };
 
 export default Layout;
+
+NativeWindStyleSheet.setOutput({
+  default: "native",
+});
